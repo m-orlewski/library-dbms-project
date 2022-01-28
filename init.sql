@@ -1,3 +1,17 @@
+DROP TABLE IF EXISTS "Ksiazka" CASCADE;
+DROP TABLE IF EXISTS "Wypozyczenie" CASCADE;
+DROP TABLE IF EXISTS "Status" CASCADE;
+DROP TABLE IF EXISTS "Autor" CASCADE;
+DROP TABLE IF EXISTS "Autor_Ksiazka" CASCADE;
+DROP TABLE IF EXISTS "Rezerwacja" CASCADE;
+DROP TABLE IF EXISTS "Klient" CASCADE;
+DROP TABLE IF EXISTS "Recenzja" CASCADE;
+DROP TABLE IF EXISTS "Wydawnictwo" CASCADE;
+DROP TABLE IF EXISTS "Wydawnictwo_Ksiazka" CASCADE;
+DROP TABLE IF EXISTS "Oplata" CASCADE;
+DROP TABLE IF EXISTS "Kategoria" CASCADE;
+DROP TABLE IF EXISTS "Kategoria_Ksiazka" CASCADE;
+
 CREATE TABLE "Ksiazka" (
   "id" SERIAL PRIMARY KEY NOT NULL,
   "tytul" varchar(40) NOT NULL,
@@ -7,8 +21,8 @@ CREATE TABLE "Ksiazka" (
 
 CREATE TABLE "Wypozyczenie" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "id_ksiazka" int NOT NULL,
-  "id_klient" int NOT NULL,
+  "id_ksiazka" int NOT NULL UNIQUE,
+  "id_klient" int NOT NULL UNIQUE,
   "data_wypozyczenia" date NOT NULL,
   "data_oddania" date NOT NULL
 );
@@ -31,10 +45,10 @@ CREATE TABLE "Autor_Ksiazka" (
 
 CREATE TABLE "Rezerwacja" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "id_ksiazka" int NOT NULL,
-  "id_klient" int NOT NULL,
+  "id_ksiazka" int NOT NULL UNIQUE,
+  "id_klient" int NOT NULL UNIQUE,
   "data_rezerwacji" date NOT NULL,
-  "id_status" int NOT NULL
+  "id_status" int NOT NULL UNIQUE
 );
 
 CREATE TABLE "Klient" (
@@ -62,8 +76,8 @@ CREATE TABLE "Wydawnictwo_Ksiazka" (
 
 CREATE TABLE "Oplata" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "id_klient" int NOT NULL,
-  "id_wypozyczenie" int NOT NULL,
+  "id_klient" int NOT NULL UNIQUE,
+  "id_wypozyczenie" int NOT NULL UNIQUE,
   "termin_zaplaty" date NOT NULL,
   "kwota" int NOT NULL
 );
