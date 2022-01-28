@@ -59,7 +59,7 @@ CREATE TABLE "Klient" (
 
 CREATE TABLE "Recenzja" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "id_ksiazka" int NOT NULL,
+  "id_ksiazka" int,
   "ocena" int NOT NULL,
   "opinia" text
 );
@@ -95,15 +95,62 @@ CREATE TABLE "Kategoria_Ksiazka" (
 ALTER TABLE "Rezerwacja" ADD FOREIGN KEY ("id_status") REFERENCES "Status" ("id");
 ALTER TABLE "Autor_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Autor_Ksiazka" ADD FOREIGN KEY ("id_autor") REFERENCES "Autor" ("id");
-ALTER TABLE "Ksiazka" ADD FOREIGN KEY ("id") REFERENCES "Rezerwacja" ("id_ksiazka");
+ALTER TABLE "Rezerwacja" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Klient" ADD FOREIGN KEY ("id") REFERENCES "Rezerwacja" ("id_klient");
-ALTER TABLE "Ksiazka" ADD FOREIGN KEY ("id") REFERENCES "Wypozyczenie" ("id_ksiazka");
+ALTER TABLE "Wypozyczenie" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Klient" ADD FOREIGN KEY ("id") REFERENCES "Wypozyczenie" ("id_klient");
 ALTER TABLE "Recenzja" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_wydawnictwo") REFERENCES "Wydawnictwo" ("id");
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Oplata" ADD FOREIGN KEY ("id_klient") REFERENCES "Klient" ("id");
-ALTER TABLE "Wypozyczenie" ADD FOREIGN KEY ("id") REFERENCES "Oplata" ("id_wypozyczenie");
+ALTER TABLE "Oplata" ADD FOREIGN KEY ("id_wypozyczenie") REFERENCES "Wypozyczenie" ("id");
 ALTER TABLE "Kategoria_Ksiazka" ADD FOREIGN KEY ("id_kategoria") REFERENCES "Kategoria" ("id");
 ALTER TABLE "Kategoria_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 
+set datestyle to European;
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Opowieść o dwóch miastach', 5, '26-11-1859');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Hobbit, czyli tam i z powrotem', 3, '21-09-1937');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Harry Potter i Kamień Filozoficzny', 1, '26-06-1997');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('I nie było już nikogo', 3, '03-02-1939');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Morderstwo w Orient Expressie', 3, '01-01-1934');
+
+INSERT INTO "Kategoria" (nazwa) VALUES ('Kryminał');
+INSERT INTO "Kategoria" (nazwa) VALUES ('Fantasy');
+INSERT INTO "Kategoria" (nazwa) VALUES ('Historyczna');
+
+INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (3, 1);
+INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (2, 2);
+INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (2, 3);
+INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (1, 4);
+INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (1, 5);
+
+INSERT INTO "Autor" (imie, nazwisko) VALUES ('Charles', 'Dickens');
+INSERT INTO "Autor" (imie, nazwisko) VALUES ('J.R.R', 'Tolkien');
+INSERT INTO "Autor" (imie, nazwisko) VALUES ('J.K.', 'Rowling');
+INSERT INTO "Autor" (imie, nazwisko) VALUES ('Agatha', 'Christie');
+
+INSERT INTO "Autor_Ksiazka" (id_ksiazka, id_autor) VALUES (1, 1);
+INSERT INTO "Autor_Ksiazka" (id_ksiazka, id_autor) VALUES (2, 2);
+INSERT INTO "Autor_Ksiazka" (id_ksiazka, id_autor) VALUES (3, 3);
+INSERT INTO "Autor_Ksiazka" (id_ksiazka, id_autor) VALUES (4, 4);
+INSERT INTO "Autor_Ksiazka" (id_ksiazka, id_autor) VALUES (5, 4);
+
+INSERT INTO "Wydawnictwo" (nazwa) VALUES ('PWN');
+INSERT INTO "Wydawnictwo" (nazwa) VALUES ('Agora');
+INSERT INTO "Wydawnictwo" (nazwa) VALUES ('Zysk i S-KA');
+
+INSERT INTO "Wydawnictwo_Ksiazka" (id_wydawnictwo, id_ksiazka) VALUES (1, 1);
+INSERT INTO "Wydawnictwo_Ksiazka" (id_wydawnictwo, id_ksiazka) VALUES (3, 2);
+INSERT INTO "Wydawnictwo_Ksiazka" (id_wydawnictwo, id_ksiazka) VALUES (3, 3);
+INSERT INTO "Wydawnictwo_Ksiazka" (id_wydawnictwo, id_ksiazka) VALUES (1, 4);
+INSERT INTO "Wydawnictwo_Ksiazka" (id_wydawnictwo, id_ksiazka) VALUES (2, 5);
+
+INSERT INTO "Status" (status) VALUES ('Złożona'); 
+INSERT INTO "Status" (status) VALUES ('Odebrana');
+
+INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (1, 8, 'Dobra książka');
+INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (1, 5, 'Meeh');
+INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (2, 9, 'Genialna książka');
+INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (3, 10, '10/10');
+INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (3, 7, 'Słabe zakończenie');
+INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (4, 7, 'Za droga');

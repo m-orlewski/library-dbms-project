@@ -104,17 +104,16 @@ Table Kategoria_Ksiazka
 }
 
 Ref: Status.id < Rezerwacja.id_status
-Ref: Autor_Ksiazka.id_ksiazka > Ksiazka.id
-Ref: Autor_Ksiazka.id_autor > Autor.id
-Ref: Rezerwacja.id_ksiazka - Ksiazka.id
+Ref: Ksiazka.id < Autor_Ksiazka.id_ksiazka
+Ref: Autor.id < Autor_Ksiazka.id_autor
+Ref: Ksiazka.id - Rezerwacja.id_ksiazka
 Ref: Klient.id > Rezerwacja.id_klient
-Ref: Wypozyczenie.id_ksiazka - Ksiazka.id
+Ref: Ksiazka.id - Wypozyczenie.id_ksiazka
 Ref: Klient.id > Wypozyczenie.id_klient
-Ref: Recenzja.id_ksiazka > Ksiazka.id
+Ref: Ksiazka.id < Recenzja.id_ksiazka
 Ref: Wydawnictwo.id < Wydawnictwo_Ksiazka.id_wydawnictwo
 Ref: Ksiazka.id < Wydawnictwo_Ksiazka.id_ksiazka
-Ref: Oplata.id_klient > Klient.id
-Ref: Oplata.id_wypozyczenie - Wypozyczenie.id
+Ref: Klient.id < Oplata.id_klient
+Ref: Wypozyczenie.id - Oplata.id_wypozyczenie
 Ref: Kategoria.id < Kategoria_Ksiazka.id_kategoria
 Ref: Ksiazka.id < Kategoria_Ksiazka.id_ksiazka
-
