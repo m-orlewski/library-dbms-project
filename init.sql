@@ -93,29 +93,17 @@ CREATE TABLE "Kategoria_Ksiazka" (
 );
 
 ALTER TABLE "Rezerwacja" ADD FOREIGN KEY ("id_status") REFERENCES "Status" ("id");
-
 ALTER TABLE "Autor_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
-
 ALTER TABLE "Autor_Ksiazka" ADD FOREIGN KEY ("id_autor") REFERENCES "Autor" ("id");
-
 ALTER TABLE "Ksiazka" ADD FOREIGN KEY ("id") REFERENCES "Rezerwacja" ("id_ksiazka");
-
 ALTER TABLE "Klient" ADD FOREIGN KEY ("id") REFERENCES "Rezerwacja" ("id_klient");
-
 ALTER TABLE "Ksiazka" ADD FOREIGN KEY ("id") REFERENCES "Wypozyczenie" ("id_ksiazka");
-
 ALTER TABLE "Klient" ADD FOREIGN KEY ("id") REFERENCES "Wypozyczenie" ("id_klient");
-
 ALTER TABLE "Recenzja" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
-
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_wydawnictwo") REFERENCES "Wydawnictwo" ("id");
-
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
-
 ALTER TABLE "Oplata" ADD FOREIGN KEY ("id_klient") REFERENCES "Klient" ("id");
-
 ALTER TABLE "Wypozyczenie" ADD FOREIGN KEY ("id") REFERENCES "Oplata" ("id_wypozyczenie");
-
 ALTER TABLE "Kategoria_Ksiazka" ADD FOREIGN KEY ("id_kategoria") REFERENCES "Kategoria" ("id");
-
 ALTER TABLE "Kategoria_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
+
