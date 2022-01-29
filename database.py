@@ -41,7 +41,6 @@ def get_books(conn, genre=None, author=None):
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
         table_data = []
         cursor.close()
-    print(table_data)
     return table_data
 
 def get_genres(conn):
@@ -71,3 +70,154 @@ def get_authors(conn):
         table_data = None
         cursor.close()
     return table_data
+
+def get_publishers(conn):
+    cursor = conn.cursor()
+    sql_object = sql.SQL("SELECT id, nazwa FROM \"Wydawnictwo\"")
+
+    try:
+        cursor.execute(sql_object)
+        table_data = cursor.fetchall()
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        table_data = None
+        cursor.close()
+    return table_data
+
+def add_book(conn, book, new_genre, new_author, new_publisher):
+    if new_genre:
+        id_genre = add_genre(conn, book['gatunek'])
+    else:
+        id_genre = get_genre_id(conn, book['gatunek'])
+
+    if new_author:
+        id_author = add_author(conn, book['autor'])
+    else:
+        id_author = get_author_id(conn, book['autor'])
+
+    if new_publisher:
+        id_publisher = add_publisher(conn, book['wydawnictwo'])
+    else:
+        id_publisher = get_publisher_id(conn, book['wydawnictwo'])
+
+    cursor = conn.cursor()
+    book['data_wydania'] = f"{book['data_wydania'][8:10]}-{book['data_wydania'][5:7]}-{book['data_wydania'][0:4]}"
+    sql_object = sql.SQL(f"INSERT INTO \"Ksiazka\" (tytul, ilosc_egzemplarzy, data_wydania) VALUES (\'{book['tytul']}\', {int(book['ilosc_egzemplarzy'])}, \'{book['data_wydania']}\') RETURNING ID")
+    
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        inserted_id = cursor.fetchone()[0]
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        inserted_id = -1
+        cursor.close()
+
+    cursor = conn.cursor()
+    sql_object1 = sql.SQL(f"INSERT INTO \"Gatunek_Ksiazka\" (id_gatunek, id_ksiazka) VALUES ({int(id_genre)}, {int(inserted_id)})")
+    sql_object2 = sql.SQL(f"INSERT INTO \"Autor_Ksiazka\" (id_autor, id_ksiazka) VALUES ({int(id_author)}, {int(inserted_id)})")
+    sql_object3 = sql.SQL(f"INSERT INTO \"Wydawnictwo_Ksiazka\" (id_wydawnictwo, id_ksiazka) VALUES ({int(id_publisher)}, {int(inserted_id)})")
+
+    try:
+        cursor.execute(sql_object1)
+        cursor.execute(sql_object2)
+        cursor.execute(sql_object3)
+        conn.commit()
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        cursor.close()
+
+    
+
+
+def add_genre(conn, genre):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"INSERT INTO \"Gatunek\" (nazwa) VALUES (\'{genre}\') RETURNING id")
+
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        inserted_id = cursor.fetchone()[0]
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        inserted_id = -1
+        cursor.close()
+    return inserted_id
+
+def add_author(conn, author):
+    cursor = conn.cursor()
+    author = author.split(' ')
+    sql_object = sql.SQL(f"INSERT INTO \"Autor\" (imie, nazwisko) VALUES (\'{author[0]}\', \'{author[1]}\') RETURNING id")
+
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        inserted_id = cursor.fetchone()[0]
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        inserted_id = -1
+        cursor.close()
+    return inserted_id
+
+def add_publisher(conn, publisher):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"INSERT INTO \"Wydawnictwo\" (nazwa) VALUES (\'{publisher}\') RETURNING id")
+
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        inserted_id = cursor.fetchone()[0]
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        inserted_id = -1
+        cursor.close()
+    return inserted_id
+
+def get_genre_id(conn, genre):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"SELECT id FROM \"Gatunek\" WHERE nazwa=\'{genre}\'")
+
+    try:
+        cursor.execute(sql_object)
+        id = int(cursor.fetchall()[0][0])
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        id = -1
+        cursor.close()
+    return id
+
+def get_author_id(conn, author):
+    cursor = conn.cursor()
+    author = author.split(' ')
+    sql_object = sql.SQL(f"SELECT id FROM \"Autor\" WHERE imie=\'{author[0]}\' AND nazwisko=\'{author[1]}\'")
+
+    try:
+        cursor.execute(sql_object)
+        id = int(cursor.fetchall()[0][0])
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        id = -1
+        cursor.close()
+    return id
+
+def get_publisher_id(conn, publisher):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"SELECT id FROM \"Wydawnictwo\" WHERE nazwa=\'{publisher}\'")
+
+    try:
+        cursor.execute(sql_object)
+        id = int(cursor.fetchall()[0][0])
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        id = -1
+        cursor.close()
+    return id
