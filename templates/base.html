@@ -18,22 +18,19 @@
             <h2>System Zarządzania Bazą Danych Biblioteki</h2>
         </div>
 
-        <div>
-        
-            <div style="height: 50px; "></div>
+        <div style="height: 50px; ">
 
-            <div class="row" style="height:100%">
-                <div class="col-2" style="padding-top:20px;">
-                    <div class="col-12">
-                        <div style="height:40px;width:100%;margin:5px">
-                            <button class="btn rounded-btn">Add Subject</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-
         
+        </div>
+        <div class="row" style="height:100%">
+        <div class="col-2" style="padding-top:20px;">
+            <div class="col-12">
+        <div style="height:40px;width:100%;margin:5px">
+            <button class="btn rounded-btn" onclick="window.location.href='http://127.0.0.1:5000/listBooks';">Lista Książek</a>
+        </div>
+        </div>
+        </div>
         <div class="col-8" style="padding:20px">
             {% block content %}
             {% endblock %}

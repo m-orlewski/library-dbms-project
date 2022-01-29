@@ -9,8 +9,8 @@ DROP TABLE IF EXISTS "Recenzja" CASCADE;
 DROP TABLE IF EXISTS "Wydawnictwo" CASCADE;
 DROP TABLE IF EXISTS "Wydawnictwo_Ksiazka" CASCADE;
 DROP TABLE IF EXISTS "Oplata" CASCADE;
-DROP TABLE IF EXISTS "Kategoria" CASCADE;
-DROP TABLE IF EXISTS "Kategoria_Ksiazka" CASCADE;
+DROP TABLE IF EXISTS "Gatunek" CASCADE;
+DROP TABLE IF EXISTS "Gatunek_Ksiazka" CASCADE;
 
 CREATE TABLE "Ksiazka" (
   "id" SERIAL PRIMARY KEY NOT NULL,
@@ -82,13 +82,13 @@ CREATE TABLE "Oplata" (
   "kwota" int NOT NULL
 );
 
-CREATE TABLE "Kategoria" (
+CREATE TABLE "Gatunek" (
   "id" SERIAL PRIMARY KEY NOT NULL,
   "nazwa" varchar(20) NOT NULL
 );
 
-CREATE TABLE "Kategoria_Ksiazka" (
-  "id_kategoria" int NOT NULL,
+CREATE TABLE "Gatunek_Ksiazka" (
+  "id_gatunek" int NOT NULL,
   "id_ksiazka" int NOT NULL
 );
 
@@ -104,8 +104,8 @@ ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_wydawnictwo") REFERENCES 
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Oplata" ADD FOREIGN KEY ("id_klient") REFERENCES "Klient" ("id");
 ALTER TABLE "Oplata" ADD FOREIGN KEY ("id_wypozyczenie") REFERENCES "Wypozyczenie" ("id");
-ALTER TABLE "Kategoria_Ksiazka" ADD FOREIGN KEY ("id_kategoria") REFERENCES "Kategoria" ("id");
-ALTER TABLE "Kategoria_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
+ALTER TABLE "Gatunek_Ksiazka" ADD FOREIGN KEY ("id_gatunek") REFERENCES "Gatunek" ("id");
+ALTER TABLE "Gatunek_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 
 set datestyle to European;
 INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Opowieść o dwóch miastach', 5, '26-11-1859');
@@ -114,15 +114,15 @@ INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Harry Po
 INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('I nie było już nikogo', 3, '03-02-1939');
 INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Morderstwo w Orient Expressie', 3, '01-01-1934');
 
-INSERT INTO "Kategoria" (nazwa) VALUES ('Kryminał');
-INSERT INTO "Kategoria" (nazwa) VALUES ('Fantasy');
-INSERT INTO "Kategoria" (nazwa) VALUES ('Historyczna');
+INSERT INTO "Gatunek" (nazwa) VALUES ('Kryminał');
+INSERT INTO "Gatunek" (nazwa) VALUES ('Fantasy');
+INSERT INTO "Gatunek" (nazwa) VALUES ('Historyczna');
 
-INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (3, 1);
-INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (2, 2);
-INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (2, 3);
-INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (1, 4);
-INSERT INTO "Kategoria_Ksiazka" (id_kategoria, id_ksiazka) VALUES (1, 5);
+INSERT INTO "Gatunek_Ksiazka" (id_gatunek, id_ksiazka) VALUES (3, 1);
+INSERT INTO "Gatunek_Ksiazka" (id_gatunek, id_ksiazka) VALUES (2, 2);
+INSERT INTO "Gatunek_Ksiazka" (id_gatunek, id_ksiazka) VALUES (2, 3);
+INSERT INTO "Gatunek_Ksiazka" (id_gatunek, id_ksiazka) VALUES (1, 4);
+INSERT INTO "Gatunek_Ksiazka" (id_gatunek, id_ksiazka) VALUES (1, 5);
 
 INSERT INTO "Autor" (imie, nazwisko) VALUES ('Charles', 'Dickens');
 INSERT INTO "Autor" (imie, nazwisko) VALUES ('J.R.R', 'Tolkien');
