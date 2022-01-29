@@ -21,10 +21,11 @@ CREATE TABLE "Ksiazka" (
 
 CREATE TABLE "Wypozyczenie" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "id_ksiazka" int NOT NULL UNIQUE,
-  "id_klient" int NOT NULL UNIQUE,
+  "id_ksiazka" int NOT NULL,
+  "id_klient" int NOT NULL,
   "data_wypozyczenia" date NOT NULL,
-  "data_oddania" date NOT NULL
+  "data_oddania" date NOT NULL,
+  "aktualne" boolean NOT NULL DEFAULT 'TRUE'
 );
 
 CREATE TABLE "Status" (
@@ -45,16 +46,18 @@ CREATE TABLE "Autor_Ksiazka" (
 
 CREATE TABLE "Rezerwacja" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "id_ksiazka" int NOT NULL UNIQUE,
-  "id_klient" int NOT NULL UNIQUE,
+  "id_ksiazka" int NOT NULL,
+  "id_klient" int NOT NULL,
   "data_rezerwacji" date NOT NULL,
-  "id_status" int NOT NULL UNIQUE
+  "id_status" int NOT NULL
 );
 
 CREATE TABLE "Klient" (
   "id" SERIAL PRIMARY KEY NOT NULL,
   "imie" varchar(20) NOT NULL,
-  "nazwisko" varchar(20) NOT NULL
+  "nazwisko" varchar(20) NOT NULL,
+  "pesel" varchar(11) NOT NULL,
+  "email" varchar(40) NOT NULL
 );
 
 CREATE TABLE "Recenzja" (
@@ -96,9 +99,9 @@ ALTER TABLE "Rezerwacja" ADD FOREIGN KEY ("id_status") REFERENCES "Status" ("id"
 ALTER TABLE "Autor_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Autor_Ksiazka" ADD FOREIGN KEY ("id_autor") REFERENCES "Autor" ("id");
 ALTER TABLE "Rezerwacja" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
-ALTER TABLE "Klient" ADD FOREIGN KEY ("id") REFERENCES "Rezerwacja" ("id_klient");
+ALTER TABLE "Rezerwacja" ADD FOREIGN KEY ("id_klient") REFERENCES "Klient" ("id");
 ALTER TABLE "Wypozyczenie" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
-ALTER TABLE "Klient" ADD FOREIGN KEY ("id") REFERENCES "Wypozyczenie" ("id_klient");
+ALTER TABLE "Wypozyczenie" ADD FOREIGN KEY ("id_klient") REFERENCES "Klient" ("id");
 ALTER TABLE "Recenzja" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_wydawnictwo") REFERENCES "Wydawnictwo" ("id");
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
@@ -154,3 +157,16 @@ INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (2, 9, 'Genialna ksią
 INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (3, 10, '10/10');
 INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (3, 7, 'Słabe zakończenie');
 INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (4, 7, 'Za droga');
+
+INSERT INTO "Klient" (imie, nazwisko, pesel, email) VALUES ('Jan', 'Kowalski', '00347612113', 'jan.kowalski@wp.pl');
+INSERT INTO "Klient" (imie, nazwisko, pesel, email) VALUES ('Jan', 'Nowak', '23345612611', 'jnowak@onet.pl');
+INSERT INTO "Klient" (imie, nazwisko, pesel, email) VALUES ('Anna', 'Malinowska', '01379342148', 'malinowska.a@gmail.com');
+INSERT INTO "Klient" (imie, nazwisko, pesel, email) VALUES ('Piotr', 'Szpak', '10347426713', 'p.szpak@wp.pl');
+
+INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (1, 1, '27-01-2022', '31-01-2022');
+INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (3, 1, '29-01-2022', '06-02-2022');
+INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (4, 2, '20-01-2022', '30-01-2022');
+
+INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (2, 4, '31-01-2022', 1);
+INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (3, 4, '03-02-2022', 1);
+INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (2, 3, '01-02-2022', 1);
