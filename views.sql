@@ -14,3 +14,34 @@ CREATE VIEW RecenzjaView AS (
     FROM "Ksiazka" AS Ks, "Recenzja" AS R
     WHERE Ks.id = R.id_ksiazka
     ORDER BY Ks.tytul);
+
+DROP VIEW IF EXISTS KlienciView;
+CREATE VIEW KlienciView AS (
+    SELECT K.imie AS "Imie", K.nazwisko AS "Nazwisko", K.pesel AS "Pesel", K.email AS "Email"
+    FROM "Klient" AS K
+    ORDER BY K.nazwisko);
+
+DROP VIEW IF EXISTS KlientWypozyczenieView;
+CREATE VIEW KlientWypozyczenieView AS (
+    SELECT K.imie AS "Imie", K.nazwisko AS "Nazwisko", K.pesel AS "Pesel", K.email AS "Email",
+    Ks.tytul AS "Tytul", W.id AS "ID Wypozyczenia", W.data_wypozyczenia AS "Data Wypozyczenia",
+    W.data_oddania AS "Data Oddania"
+    FROM "Klient" AS K, "Ksiazka" AS Ks, "Wypozyczenie" AS W
+    WHERE W.id_ksiazka = Ks.id AND W.id_klient = K.id
+    ORDER BY K.nazwisko);
+
+DROP VIEW IF EXISTS KlientAktualneWypozyczenieView;
+CREATE VIEW KlientAktualneWypozyczenieView AS (
+    SELECT K.imie AS "Imie", K.nazwisko AS "Nazwisko", K.pesel AS "Pesel", K.email AS "Email",
+    Ks.tytul AS "Tytul", W.id AS "ID Wypozyczenia", W.data_wypozyczenia AS "Data Wypozyczenia",
+    W.data_oddania AS "Data Oddania"
+    FROM "Klient" AS K, "Ksiazka" AS Ks, "Wypozyczenie" AS W
+    WHERE W.id_ksiazka = Ks.id AND W.id_klient = K.id AND W.aktualne = 'TRUE'
+    ORDER BY K.nazwisko);
+
+DROP VIEW IF EXISTS DostepneKsiazkiView;
+CREATE VIEW DostepneKsiazkiView AS (
+    SELECT Ks.tytul AS "Tytul"
+    FROM "Ksiazka" AS Ks
+    WHERE Ks.ilosc_egzemplarzy > 0
+    ORDER BY Ks.tytul);
