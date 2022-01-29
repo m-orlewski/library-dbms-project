@@ -7,3 +7,10 @@ CREATE VIEW KsiazkiView AS (
           Ks.id = WK.id_ksiazka AND WK.id_wydawnictwo = W.id AND
           Ks.id = AK.id_ksiazka AND AK.id_autor = A.id
     ORDER BY Ks.tytul);
+
+DROP VIEW IF EXISTS RecenzjaView;
+CREATE VIEW RecenzjaView AS (
+    SELECT Ks.tytul AS "Tytul", R.ocena AS "Ocena", R.opinia AS "Opinia"
+    FROM "Ksiazka" AS Ks, "Recenzja" AS R
+    WHERE Ks.id = R.id_ksiazka
+    ORDER BY Ks.tytul);

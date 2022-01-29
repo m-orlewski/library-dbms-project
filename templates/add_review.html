@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST" id="review-form">
+    <div class="form-group">
+        <label for="select-book">Wybierz Książkę</label>
+        <select name="select-book" id="select-book" class="form-select">
+            {% for book in books %}
+                <option value="{{book[0]}}">{{book[0]}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="rating">Ocena</label>
+        <input type="number" class="form-control" id="rating" name="rating" min="1" max="10" placeholder="Ocena"/>
+    </div>
+
+    <div class="mb-3">
+        <label for="review" class="form-label">Napisz opinię o książce</label>
+        <textarea class="form-control" name="review" id="review" form="review-form" rows="3">Opinia...</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-dark">Dodaj</button>
+  </form>
+{% endblock %}

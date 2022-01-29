@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if books %}
+    <form class="filter-form" method="POST">
+            <select name="select-book" id="select-book" class="form-select">
+                <option selected value="0">Filtruj po książce</option>
+                {% for book in books %}
+                    <option value="{{book[0]}}">{{book[0]}}</option>
+                {% endfor %}
+            </select>
+            <br /><br /><button type="submit" class="btn btn-dark">Filtruj</button>
+    </form>
+    {% endif %}
+    {% if reviews %}
+        {% for review in reviews %}
+        <div class="d-flex flex-row">
+        <div class="card" style="width: 80%; margin: auto ">
+            <div class="card-body">
+              <h5 class="card-title">{{review[1]}}/10</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{review[0]}}</h6>
+              <p class="card-text">{{review[2]}}</p>
+              <a href="#" class="card-link">Card link</a>
+              <a href="#" class="card-link">Another link</a>
+            </div>
+        </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-dark" style="text-align: center;">
+            Brak recenzji dla danej książki.
+        </div>
+    {% endif %}
+{% endblock %}

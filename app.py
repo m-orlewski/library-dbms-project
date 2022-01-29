@@ -80,6 +80,45 @@ def add_book_post():
 
     return redirect(url_for('list_books_get'))
     
+@app.route("/showReviews", methods=['GET'])
+def show_reviews_get():
+    reviews = get_reviews(conn)
+    books = get_books(conn)
+
+    return render_template('reviews.html', books=books, reviews=reviews)
+
+@app.route("/showReviews", methods=['POST'])
+def show_reviews_post():
+
+    book = request.form.get('select-book')
+
+    if book != '0':
+        reviews = get_reviews(conn, book)
+    else:
+        reviews = get_reviews(conn)
+    books = get_books(conn)
+
+    return render_template('reviews.html', books=books, reviews=reviews)
+
+@app.route("/addReview", methods=['GET'])
+def add_review_get():
+    books = get_books(conn)
+    return render_template('add_review.html', books=books)
+
+@app.route("/addReview", methods=['POST'])
+def add_review_post():
+    review = {}
+
+    review['tytul'] = request.form.get('select-book')
+    review['ocena'] = request.form.get('rating')
+    review['opinia'] = request.form.get('review')
+
+    if review['ocena'] == '' or review['opinia'] is None:
+        flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
+        return redirect(url_for('add_review_get'))
+
+    add_review(conn, review)
+    return redirect(url_for('show_reviews_get'))
 
 if __name__ == '__main__':
     app.run()

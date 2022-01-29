@@ -28,7 +28,10 @@
             <tr><td>{{row[0]}}</td><td>{{row[4]}} {{row[5]}}</td><td>{{row[3]}}</td><td>{{row[1]}}</td><td>{{row[6]}}</td><td>{{row[2]}}</td></tr>
         {% endfor %}
         </table>
-
+    {% else %}
+        <div class="alert alert-dark" style="text-align: center;">
+            Brak książek do wyświetlenia.
+        </div>
     {% endif %}
 {% endblock %}
 

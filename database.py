@@ -130,9 +130,6 @@ def add_book(conn, book, new_genre, new_author, new_publisher):
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
         cursor.close()
 
-    
-
-
 def add_genre(conn, genre):
     cursor = conn.cursor()
     sql_object = sql.SQL(f"INSERT INTO \"Gatunek\" (nazwa) VALUES (\'{genre}\') RETURNING id")
@@ -221,3 +218,47 @@ def get_publisher_id(conn, publisher):
         id = -1
         cursor.close()
     return id
+
+def get_book_id(conn, title):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"SELECT id FROM \"Ksiazka\" WHERE tytul=\'{title}\'")
+
+    try:
+        cursor.execute(sql_object)
+        id = int(cursor.fetchall()[0][0])
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        id = -1
+        cursor.close()
+    return id
+
+def get_reviews(conn, book=None):
+    cursor = conn.cursor()
+    if not book:
+        sql_object = sql.SQL("SELECT * FROM RecenzjaView")
+    else:
+        sql_object = sql.SQL(f"SELECT * FROM RecenzjaView WHERE \"Tytul\"=\'{book}\'")
+    try:
+        cursor.execute(sql_object)
+        table_data = cursor.fetchall()
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        table_data = []
+        cursor.close()
+
+    return table_data
+
+def add_review(conn, review):
+    book_id = get_book_id(conn, review['tytul'])
+
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"INSERT INTO \"Recenzja\" (id_ksiazka, ocena, opinia) VALUES ({int(book_id)}, {int(review['ocena'])}, \'{review['opinia']}\')")
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        cursor.close()
