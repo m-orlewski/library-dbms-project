@@ -41,7 +41,7 @@ CREATE VIEW KlientAktualneWypozyczenieView AS (
 
 DROP VIEW IF EXISTS DostepneKsiazkiView;
 CREATE VIEW DostepneKsiazkiView AS (
-    SELECT Ks.tytul AS "Tytul"
+    SELECT Ks.id AS "Id", Ks.tytul AS "Tytul"
     FROM "Ksiazka" AS Ks
     WHERE Ks.ilosc_egzemplarzy > 0
     ORDER BY Ks.tytul);

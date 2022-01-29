@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
+    <div class="form-group">
+        <label for="add-genre">Dodaj nowy gatunek</label>
+        <input type="text" class="form-control" id="add-genre" name="add-genre" placeholder="Nowy Gatunek" />
+    </div>
+    <div class="form-group">
+        <label for="add-author">Dodaj nowego autora</label>
+        <input type="text" class="form-control" id="add-author" name="add-author" placeholder="Nowy Autor" />
+    </div>
+    <div class="form-group">
+        <label for="add-publisher">Dodaj nowe wydawnictwo</label>
+        <input type="text" class="form-control" id="add-publisher" name="add-publisher" placeholder="Nowe Wydawnictwo" />
+    </div>
+    <div class="form-group">
+        <label for="add-status">Dodaj nowy status rezerwacji</label>
+        <input type="text" class="form-control" id="add-status" name="add-status" placeholder="Nowy Status" />
+    </div>
+    <button type="submit" class="btn btn-dark">Dodaj</button>
+</form>
+
+{% endblock %}

@@ -148,12 +148,67 @@ def add_client_post():
     add_client(conn, client)
     return redirect(url_for('list_clients_get'))
 
-'''
-@app.route("/rentBook", methods=['GET'])
-def rent_book_get():
+@app.route("/addTables", methods=['GET'])
+def add_tables_get():
+    return render_template('add_tables.html')
+
+@app.route("/addTables", methods=['POST'])
+def add_tables_post():
+    genre = request.form.get('add-genre')
+    author = request.form.get('add-author')
+    publisher = request.form.get('add-publisher')
+    status = request.form.get('add-status')
+
+    msg = ''
+    if genre != '':
+        msg += f'nowy gatunek({genre}), '
+        add_genre(conn, genre)
+    if author != '':
+        msg += f'nowy autor({author}), '
+        add_author(conn, author)
+    if publisher != '':
+        msg += f'nowe wydawnictwo({publisher}), '
+        add_publisher(conn, publisher)
+    if status != '':
+        msg += f'nowy status({status}), '
+        add_status(conn, status)
+
+    if msg == '':
+        flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
+    else:
+        msg = 'Dodano ' + msg
+        flash(msg[:-2])
+
+    return redirect(url_for('add_tables_get'))
+
+@app.route("/addReservation", methods=['GET'])
+def add_reservation_get():
     books = get_available_books(conn)
-    return render_template('rent_book.html', books=books)
-'''
+    return render_template('add_reservation.html', books=books)
+
+@app.route("/addReservation", methods=['POST'])
+def add_reservation_post():
+    book = request.form.get('select-book')
+    pesel = request.form.get('pesel')
+    data_rezerwacji = request.form.get('date')
+
+    if book == '' or pesel == '' or data_rezerwacji == '':
+        flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
+        return redirect(url_for('add_reservation_get'))
+
+    add_reservation(conn, book, pesel, data_rezerwacji)
+    return redirect(url_for('add_reservation_get'))
+
+@app.route("/addRent", methods=['GET'])
+def add_rent_get():
+    books = get_available_books(conn)
+    return render_template('add_rent.html', books=books)
+
+@app.route("/addRent", methods=['POST'])
+def add_rent_get():
+    books = get_available_books(conn)
+    return render_template('add_rent.html', books=books)
+
 
 if __name__ == '__main__':
     app.run()

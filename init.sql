@@ -49,7 +49,7 @@ CREATE TABLE "Rezerwacja" (
   "id_ksiazka" int NOT NULL,
   "id_klient" int NOT NULL,
   "data_rezerwacji" date NOT NULL,
-  "id_status" int NOT NULL
+  "id_status" int NOT NULL DEFAULT 1
 );
 
 CREATE TABLE "Klient" (
@@ -77,14 +77,6 @@ CREATE TABLE "Wydawnictwo_Ksiazka" (
   "id_ksiazka" int NOT NULL
 );
 
-CREATE TABLE "Oplata" (
-  "id" SERIAL PRIMARY KEY NOT NULL,
-  "id_klient" int NOT NULL UNIQUE,
-  "id_wypozyczenie" int NOT NULL UNIQUE,
-  "termin_zaplaty" date NOT NULL,
-  "kwota" int NOT NULL
-);
-
 CREATE TABLE "Gatunek" (
   "id" SERIAL PRIMARY KEY NOT NULL,
   "nazwa" varchar(20) NOT NULL
@@ -105,8 +97,6 @@ ALTER TABLE "Wypozyczenie" ADD FOREIGN KEY ("id_klient") REFERENCES "Klient" ("i
 ALTER TABLE "Recenzja" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_wydawnictwo") REFERENCES "Wydawnictwo" ("id");
 ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
-ALTER TABLE "Oplata" ADD FOREIGN KEY ("id_klient") REFERENCES "Klient" ("id");
-ALTER TABLE "Oplata" ADD FOREIGN KEY ("id_wypozyczenie") REFERENCES "Wypozyczenie" ("id");
 ALTER TABLE "Gatunek_Ksiazka" ADD FOREIGN KEY ("id_gatunek") REFERENCES "Gatunek" ("id");
 ALTER TABLE "Gatunek_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 
