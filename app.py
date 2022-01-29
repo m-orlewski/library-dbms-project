@@ -80,15 +80,15 @@ def add_book_post():
 
     return redirect(url_for('list_books_get'))
     
-@app.route("/showReviews", methods=['GET'])
-def show_reviews_get():
+@app.route("/listReviews", methods=['GET'])
+def list_reviews_get():
     reviews = get_reviews(conn)
     books = get_books(conn)
 
     return render_template('reviews.html', books=books, reviews=reviews)
 
-@app.route("/showReviews", methods=['POST'])
-def show_reviews_post():
+@app.route("/listReviews", methods=['POST'])
+def list_reviews_post():
 
     book = request.form.get('select-book')
 
@@ -119,6 +119,33 @@ def add_review_post():
 
     add_review(conn, review)
     return redirect(url_for('show_reviews_get'))
+
+@app.route("/listClients", methods=['GET'])
+def list_clients_get():
+    active_clients = get_clients(conn, True)
+    all_clients = get_clients(conn)
+
+    return render_template('clients.html', active_clients=active_clients, all_clients=all_clients)
+
+@app.route("/addClient", methods=['GET'])
+def add_client_get():
+    return render_template('add_client.html')
+
+@app.route("/addClient", methods=['POST'])
+def add_client_post():
+    client = {}
+
+    client['pesel'] = request.form.get('pesel')
+    client['imie'] = request.form.get('imie')
+    client['nazwisko'] = request.form.get('nazwisko')
+    client['email'] = request.form.get('email')
+
+'''
+@app.route("/rentBook", methods=['GET'])
+def rent_book_get():
+    books = get_available_books(conn)
+    return render_template('rent_book.html', books=books)
+'''
 
 if __name__ == '__main__':
     app.run()

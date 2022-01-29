@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if active_clients %}
+        <h2>Klienci z aktywnymi wypożyczeniami</h2>
+        <table class="table table-bordered border-success" ><tr style="font-weight: bold; background-color:#ccffcc;">
+        <td>Imie</td><td>Nazwisko</td><td>Pesel</td><td>Email</td><td>Ilość wypożyczeń</td></tr>
+        {% for client in active_clients %}
+            <tr><td>{{client[0]}}</td><td>{{client[1]}}</td><td>{{client[2]}}</td><td>{{client[3]}}</td><td>{{client[4]}}</td></tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <div class="alert alert-dark" style="text-align: center;">
+            Brak klientów do wyświetlenia.
+        </div>
+    {% endif %}
+
+    {% if all_clients %}
+        <h2>Wszyscy klienci</h2>
+        <table class="table table-bordered border-success" ><tr style="font-weight: bold; background-color:#ccffcc;">
+        <td>Imie</td><td>Nazwisko</td><td>Pesel</td><td>Email</td></tr>
+        {% for client in all_clients %}
+            <tr><td>{{client[0]}}</td><td>{{client[1]}}</td><td>{{client[2]}}</td><td>{{client[3]}}</td></tr>
+        {% endfor %}
+        </table>
+        {% else %}
+            <div class="alert alert-dark" style="text-align: center;">
+                Brak klientów do wyświetlenia.
+            </div>
+    {% endif %}
+{% endblock %}

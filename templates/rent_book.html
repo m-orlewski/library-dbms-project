@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
+    <div class="form-group">
+      <label for="tytul">Tytuł</label>
+      <input type="text" class="form-control" id="tytul" name="tytul" placeholder="Podaj tytuł" />
+    </div>
+    <div class="form-group">
+        <label for="select-book">Wybierz Tytuł</label>
+        <select name="select-book" id="select-book" class="form-select">
+            {% for book in books %}
+                <option value="{{book[0]}}">{{book[0]}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="pesel">Podaj pesel</label>
+        <input type="text" class="form-control" id="pesel" name="pesel" />
+    </div>
+    <div class="form-group">
+        <label for="imie">Podaj imie</label>
+        <input type="text" class="form-control" id="imie" name="imie" />
+    </div>
+    <div class="form-group">
+        <label for="nazwisko">Podaj nazwisko</label>
+        <input type="text" class="form-control" id="nazwisko" name="nazwisko" />
+    </div>
+    <div class="form-group">
+        <label for="email">Podaj email</label>
+        <input type="text" class="form-control" id="email" name="email" />
+    </div>
+    <div class="form-group">
+        <label for="add-author">Dodaj nowego autora</label>
+        <input type="text" class="form-control" id="add-author" name="add-author" placeholder="Nowy Autor" />
+    </div>
+    <div class="form-group">
+        <label for="select-publisher">Wybierz Wydawnictwo</label>
+        <select name="select-publisher" id="select-publisher" class="form-select">
+            <option selected value="0">Nowe Wydawnictwo</option>
+            {% for publisher in publishers %}
+                <option value="{{publisher[1]}}">{{publisher[1]}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="add-publisher">Dodaj nowe wydawnictwo</label>
+        <input type="text" class="form-control" id="add-publisher" name="add-publisher" placeholder="Nowe Wydawnictwo" />
+    </div>
+    <div class="form-group">
+        <label for="date">Data wydania</label>
+        <input type="date" class="form-control" id="date" name="date" placeholder="Data wydania" />
+    </div>
+    <div class="form-group">
+        <label for="count">Ilość egzemplarzy</label>
+        <input type="number" class="form-control" id="count" name="count" min="1" placeholder="Ilość egzemplarzy" />
+    </div>
+    <button type="submit" class="btn btn-dark">Dodaj</button>
+  </form>
+{% endblock %}

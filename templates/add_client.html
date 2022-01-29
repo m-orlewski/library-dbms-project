@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
+    <div class="form-group">
+        <label for="pesel">Podaj pesel</label>
+        <input type="text" class="form-control" id="pesel" name="pesel" />
+    </div>
+    <div class="form-group">
+        <label for="imie">Podaj imie</label>
+        <input type="text" class="form-control" id="imie" name="imie" />
+    </div>
+    <div class="form-group">
+        <label for="nazwisko">Podaj nazwisko</label>
+        <input type="text" class="form-control" id="nazwisko" name="nazwisko" />
+    </div>
+    <div class="form-group">
+        <label for="email">Podaj email</label>
+        <input type="text" class="form-control" id="email" name="email" />
+    </div>
+
+    <button type="submit" class="btn btn-dark">Dodaj</button>
+</form>
+{% endblock %}

@@ -4,7 +4,8 @@ import urllib.parse
 
 def connect_postgres():
     urllib.parse.uses_netloc.append("postgres")
-    url = urllib.parse.urlparse("postgres://dnahfzon:qXIKAdro1glx68jGYpWCigc4C69EzbSH@ella.db.elephantsql.com/dnahfzon")
+    #url = urllib.parse.urlparse("postgres://dnahfzon:qXIKAdro1glx68jGYpWCigc4C69EzbSH@ella.db.elephantsql.com/dnahfzon")
+    url = urllib.parse.urlparse("postgres://hommtnmr:hXFpq-rZYsmbO68dCcE-dw5Se7w31qaT@tyke.db.elephantsql.com/hommtnmr")
     print ("\nconnecting to PostgreSQL")
     try:
         conn = connect (
@@ -262,3 +263,39 @@ def add_review(conn, review):
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
         cursor.close()
+
+def get_available_books(conn):
+    cursor = conn.cursor()
+    sql_object = sql.SQL("SELECT * FROM DostepneKsiazkiView")
+
+    try:
+        cursor.execute(sql_object)
+        table_data = cursor.fetchall()
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        table_data = []
+        cursor.close()
+    return table_data
+
+def get_clients(conn, active_only=False):
+    cursor = conn.cursor()
+    if active_only:
+        sql_object = sql.SQL('''
+                                SELECT \"Imie\", \"Nazwisko\", \"Pesel\", \"Email\", COUNT(\"ID Wypozyczenia\")
+                                FROM KlientWypozyczenieView
+                                GROUP BY \"Imie\", \"Nazwisko\", \"Pesel\", \"Email\"
+                                ORDER BY \"Nazwisko\"
+                            ''')
+    else:
+        sql_object = sql.SQL("SELECT * FROM KlienciView")
+
+    try:
+        cursor.execute(sql_object)
+        table_data = cursor.fetchall()
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        table_data = []
+        cursor.close()
+    return table_data
