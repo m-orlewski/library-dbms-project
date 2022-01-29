@@ -299,3 +299,14 @@ def get_clients(conn, active_only=False):
         table_data = []
         cursor.close()
     return table_data
+
+def add_client(conn, client):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"INSERT INTO \"Klient\" (imie, nazwisko, pesel, email) VALUES (\'{client['imie']}\', \'{client['nazwisko']}\', \'{client['pesel']}\', \'{client['email']}\')")
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        cursor.close()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        cursor.close()

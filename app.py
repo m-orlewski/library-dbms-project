@@ -118,7 +118,7 @@ def add_review_post():
         return redirect(url_for('add_review_get'))
 
     add_review(conn, review)
-    return redirect(url_for('show_reviews_get'))
+    return redirect(url_for('lind_reviews_get'))
 
 @app.route("/listClients", methods=['GET'])
 def list_clients_get():
@@ -139,6 +139,14 @@ def add_client_post():
     client['imie'] = request.form.get('imie')
     client['nazwisko'] = request.form.get('nazwisko')
     client['email'] = request.form.get('email')
+
+    for el in client.values():
+        if el == '':
+            flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
+            return redirect(url_for('add_client_get'))
+
+    add_client(conn, client)
+    return redirect(url_for('list_clients_get'))
 
 '''
 @app.route("/rentBook", methods=['GET'])
