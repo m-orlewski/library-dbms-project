@@ -137,8 +137,9 @@ INSERT INTO "Wydawnictwo_Ksiazka" (id_wydawnictwo, id_ksiazka) VALUES (3, 3);
 INSERT INTO "Wydawnictwo_Ksiazka" (id_wydawnictwo, id_ksiazka) VALUES (1, 4);
 INSERT INTO "Wydawnictwo_Ksiazka" (id_wydawnictwo, id_ksiazka) VALUES (2, 5);
 
-INSERT INTO "Status" (status) VALUES ('Złożona'); 
-INSERT INTO "Status" (status) VALUES ('Odebrana');
+INSERT INTO "Status" (id, status) VALUES (1, 'Złożona'); 
+INSERT INTO "Status" (id, status) VALUES (2, 'Odebrana');
+INSERT INTO "Status" (id, status) VALUES (3, 'Anulowana');
 
 INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (1, 8, 'Dobra książka');
 INSERT INTO "Recenzja" (id_ksiazka, ocena, opinia) VALUES (1, 5, 'Meeh');

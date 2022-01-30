@@ -404,7 +404,7 @@ def add_rent(conn, book, pesel, data_wypozyczenia, data_oddania):
 def get_client_id(conn, pesel):
     cursor = conn.cursor()
 
-    sql_object = sql.SQL(f"SELECT id FROM \"Klient\" WHERE pesel = \'{pesel}\';")
+    sql_object = sql.SQL(f"SELECT id FROM \"Klient\" WHERE pesel = \'{pesel}\'")
 
     try:
         cursor.execute(sql_object)
@@ -416,5 +416,52 @@ def get_client_id(conn, pesel):
     finally:
         cursor.close()
     return id
+
+def get_statuses(conn):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"SELECT id, status FROM \"Status\"")
+
+    try:
+        cursor.execute(sql_object)
+        table_data = cursor.fetchall()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        table_data = []
+    finally:
+        cursor.close()
+
+    return table_data
+
+def get_reservations(conn):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"SELECT * FROM RezerwacjeView")
+
+    try:
+        cursor.execute(sql_object)
+        table_data = cursor.fetchall()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        table_data = []
+    finally:
+        cursor.close()
+
+    return table_data
+
+def change_status(conn, id, status_id):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"UPDATE \"Rezerwacja\" SET id_status = {status_id} WHERE id = {id}")
+
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        return True
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        return False
+    finally:
+        cursor.close()
 
 

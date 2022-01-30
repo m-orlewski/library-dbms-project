@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form class="filter-form" method="POST">
+
+    <div class="form-group">
+        <label for="reservation-id">Podaj id rezerwacji</label>
+        <input type="number" class="form-control" id="reservation-id" name="reservation-id" style="width: 20%; margin: auto"/>
+    </div>
+
+    {% if statuses %}
+        <select name="select-status" id="select-status" class="form-select">
+            <option selected value="0">Nowy status</option>
+            {% for status in statuses %}
+                <option value="{{status[0]}}">{{status[1]}}</option>
+            {% endfor %}
+        </select>
+    {% endif %}
+
+    <br /><br /><button type="submit" class="btn btn-dark">Zmień status</button>
+</form>
+
+{% if reservations %}
+    <table class="table table-bordered border-success" ><tr style="font-weight: bold; background-color:#ccffcc;">
+    <td>Id</td><td>Id Książki</td><td>Pesel</td><td>Data rezerwacji</td><td>Status</td></tr>
+    {% for reservation in reservations %}
+        <tr><td>{{reservation[0]}}</td><td>{{reservation[1]}}</td><td>{{reservation[2]}}</td><td>{{reservation[3]}}</td><td>{{reservation[4]}}</td></tr>
+    {% endfor %}
+    </table>
+    {% else %}
+    <div class="alert alert-dark" style="text-align: center;">
+        Brak rezerwacji do wyświetlenia.
+    </div>
+{% endif %}
+
+
+{% endblock %}

@@ -45,3 +45,10 @@ CREATE VIEW DostepneKsiazkiView AS (
     FROM "Ksiazka" AS Ks
     WHERE Ks.ilosc_egzemplarzy > 0
     ORDER BY Ks.tytul);
+
+DROP VIEW IF EXISTS RezerwacjeView;
+CREATE VIEW RezerwacjeView AS (
+    SELECT R.id AS "Id Rezerwacji", R.id_ksiazka AS "Id Książki", K.pesel AS "Pesel", R.data_rezerwacji AS "Data Rezerwacji", S.status AS "Status"
+    FROM "Rezerwacja" AS R, "Klient" AS K, "Status" AS S
+    WHERE K.id = R.id_klient AND R.id_status = S.id
+    ORDER BY R.id);

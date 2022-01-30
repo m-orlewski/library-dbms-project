@@ -234,7 +234,36 @@ def add_rent_post():
     if not add_rent(conn, book, pesel, data_wypozyczenia, data_oddania):
         flash('Nie udało się dodać wypożyczenia. Spróbuj ponownie.')
         return redirect(url_for('add_rent_get'))
-    return redirect(url_for('add_rent_get'))
+    else:
+        flash('Wypożyczenie dodane do bazy.')
+        return redirect(url_for('add_rent_get'))
+
+@app.route("/changeStatus", methods=['GET'])
+def change_status_get():
+    statuses = get_statuses(conn)
+    reservations = get_reservations(conn)
+    return render_template('update_status.html', reservations=reservations, statuses=statuses)
+
+@app.route("/changeStatus", methods=['POST'])
+def change_status_post():
+    reservation_id = int(request.form.get('reservation-id'))
+    new_status = request.form.get('select-status')
+
+    reservations = get_reservations(conn)
+    ids = [int(reservations[i][0]) for i in range(len(reservations))]
+
+    if new_status == '0' or reservation_id not in ids:
+        flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
+        return redirect(url_for('change_status_get'))
+
+    if not change_status(conn, reservation_id, new_status):
+        flash('Nie udało się zmienić statusu rezerwacji. Spróbuj ponownie.')
+        return redirect(url_for('change_status_get'))
+    else:
+        flash('Status rezerwacji zmieniony.')
+        return redirect(url_for('change_status_get'))
+
+
 
 if __name__ == '__main__':
     app.run()
