@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form class="filter-form" method="POST">
+
+    <div class="form-group">
+        <label for="rent-id">Podaj id wypozyczenia</label>
+        <input type="number" class="form-control" id="rent-id" name="rent-id" style="width: 20%; margin: auto"/>
+    </div>
+
+    <br /><br /><button type="submit" class="btn btn-dark">Zwróć książkę</button>
+</form>
+
+{% if rented_books %}
+    <table class="table table-bordered border-success" ><tr style="font-weight: bold; background-color:#ccffcc;">
+    <td>Id</td><td>Id Książki</td><td>Id Klienta</td><td>Data wypozyczenia</td><td>Data Oddania</td></tr>
+    {% for book in rented_books %}
+        <tr><td>{{book[0]}}</td><td>{{book[1]}}</td><td>{{book[2]}}</td><td>{{book[3]}}</td><td>{{book[4]}}</td></tr>
+    {% endfor %}
+    </table>
+    {% else %}
+    <div class="alert alert-dark" style="text-align: center;">
+        Brak rezerwacji do wyświetlenia.
+    </div>
+{% endif %}
+
+
+{% endblock %}

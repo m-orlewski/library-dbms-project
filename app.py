@@ -263,6 +263,28 @@ def change_status_post():
         flash('Status rezerwacji zmieniony.')
         return redirect(url_for('change_status_get'))
 
+@app.route("/returnBook", methods=['GET'])
+def return_book_get():
+    rented_books = get_rented(conn)
+
+    return render_template('return_book.html', rented_books=rented_books)
+
+@app.route("/returnBook", methods=['POST'])
+def return_book_post():
+    rent_id = int(request.form.get('rent-id'))
+    rented_books = get_rented(conn)
+    ids = [int(rented_books[i][0]) for i in range(len(rented_books))]
+
+    if rent_id not in ids:
+        flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
+        return redirect(url_for('return_book_get'))
+
+    if not return_book(conn, rent_id):
+        flash('Nie udało się zwrócić książki. Spróbuj ponownie.')
+        return redirect(url_for('return_book_get'))
+    else:
+        flash('Książka zwrócona.')
+        return redirect(url_for('return_book_get'))
 
 
 if __name__ == '__main__':

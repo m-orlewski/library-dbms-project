@@ -464,4 +464,35 @@ def change_status(conn, id, status_id):
     finally:
         cursor.close()
 
+def get_rented(conn):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"SELECT * FROM \"Wypozyczenie\" WHERE aktualne = \'TRUE\'")
+
+    try:
+        cursor.execute(sql_object)
+        table_data = cursor.fetchall()
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        table_data = []
+    finally:
+        cursor.close()
+
+    return table_data
+
+def return_book(conn, rent_id):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"UPDATE \"Wypozyczenie\" SET aktualne = \'FALSE\' WHERE id = {rent_id}")
+
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        return True
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        return False
+    finally:
+        cursor.close()
+
 

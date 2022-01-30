@@ -27,7 +27,7 @@ CREATE VIEW KlientWypozyczenieView AS (
     Ks.tytul AS "Tytul", W.id AS "ID Wypozyczenia", W.data_wypozyczenia AS "Data Wypozyczenia",
     W.data_oddania AS "Data Oddania"
     FROM "Klient" AS K, "Ksiazka" AS Ks, "Wypozyczenie" AS W
-    WHERE W.id_ksiazka = Ks.id AND W.id_klient = K.id
+    WHERE W.id_ksiazka = Ks.id AND W.id_klient = K.id AND W.aktualne = 'TRUE'
     ORDER BY K.nazwisko);
 
 DROP VIEW IF EXISTS KlientAktualneWypozyczenieView;
