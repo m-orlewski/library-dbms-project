@@ -2,6 +2,7 @@ from webbrowser import get
 from flask import Flask, render_template, request, flash, redirect, url_for
 from database import *
 import os
+from datetime import date
 
 conn = connect_postgres()
 app = Flask(__name__)
@@ -118,7 +119,7 @@ def add_review_post():
         return redirect(url_for('add_review_get'))
 
     add_review(conn, review)
-    return redirect(url_for('lind_reviews_get'))
+    return redirect(url_for('list_reviews_get'))
 
 @app.route("/listClients", methods=['GET'])
 def list_clients_get():
@@ -205,9 +206,21 @@ def add_rent_get():
     return render_template('add_rent.html', books=books)
 
 @app.route("/addRent", methods=['POST'])
-def add_rent_get():
-    books = get_available_books(conn)
-    return render_template('add_rent.html', books=books)
+def add_rent_post():
+    book = request.form.get('select-book')
+    print(book)
+    pesel = request.form.get('pesel')
+    data_wypozyczenia = date.today()
+    data_oddania = request.form.get('return-date')
+    
+    if book == '' or pesel == '' or data_oddania == '':
+        flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
+        return redirect(url_for('add_rent_get'))
+
+    add_rent(conn, book, pesel, data_wypozyczenia, data_oddania)
+    return redirect(url_for('add_rent_get'))
+
+    
 
 
 if __name__ == '__main__':

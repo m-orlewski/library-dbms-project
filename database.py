@@ -23,6 +23,7 @@ def connect_postgres():
 
 def get_books(conn, genre=None, author=None):
     cursor = conn.cursor()
+
     if not genre and not author:
         sql_object = sql.SQL("SELECT * FROM KsiazkiView")
     elif genre and author:
@@ -37,11 +38,13 @@ def get_books(conn, genre=None, author=None):
     try:
         cursor.execute(sql_object)
         table_data = cursor.fetchall()
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
         table_data = []
+    finally:
         cursor.close()
+
     return table_data
 
 def get_genres(conn):
@@ -51,11 +54,13 @@ def get_genres(conn):
     try:
         cursor.execute(sql_object)
         table_data = cursor.fetchall()
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        table_data = None
+        conn.rollback()
+        table_data = []
+    finally:
         cursor.close()
+
     return table_data
 
 def get_authors(conn):
@@ -64,12 +69,14 @@ def get_authors(conn):
 
     try:
         cursor.execute(sql_object)
-        table_data = cursor.fetchall()
-        cursor.close()
+        table_data = cursor.fetchall() 
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        table_data = None
+        conn.rollback()
+        table_data = []
+    finally:
         cursor.close()
+
     return table_data
 
 def get_publishers(conn):
@@ -79,11 +86,13 @@ def get_publishers(conn):
     try:
         cursor.execute(sql_object)
         table_data = cursor.fetchall()
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        table_data = None
+        conn.rollback()
+        table_data = []
+    finally:
         cursor.close()
+
     return table_data
 
 def add_book(conn, book, new_genre, new_author, new_publisher):
@@ -103,32 +112,35 @@ def add_book(conn, book, new_genre, new_author, new_publisher):
         id_publisher = get_publisher_id(conn, book['wydawnictwo'])
 
     cursor = conn.cursor()
-    book['data_wydania'] = f"{book['data_wydania'][8:10]}-{book['data_wydania'][5:7]}-{book['data_wydania'][0:4]}"
     sql_object = sql.SQL(f"INSERT INTO \"Ksiazka\" (tytul, ilosc_egzemplarzy, data_wydania) VALUES (\'{book['tytul']}\', {int(book['ilosc_egzemplarzy'])}, \'{book['data_wydania']}\') RETURNING ID")
     
     try:
         cursor.execute(sql_object)
         conn.commit()
-        inserted_id = cursor.fetchone()[0]
-        cursor.close()
+        book_id = cursor.fetchone()[0]
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        inserted_id = -1
+        conn.rollback()
+        return False
+    finally:
         cursor.close()
 
     cursor = conn.cursor()
-    sql_object1 = sql.SQL(f"INSERT INTO \"Gatunek_Ksiazka\" (id_gatunek, id_ksiazka) VALUES ({int(id_genre)}, {int(inserted_id)})")
-    sql_object2 = sql.SQL(f"INSERT INTO \"Autor_Ksiazka\" (id_autor, id_ksiazka) VALUES ({int(id_author)}, {int(inserted_id)})")
-    sql_object3 = sql.SQL(f"INSERT INTO \"Wydawnictwo_Ksiazka\" (id_wydawnictwo, id_ksiazka) VALUES ({int(id_publisher)}, {int(inserted_id)})")
+    sql_object1 = sql.SQL(f"INSERT INTO \"Gatunek_Ksiazka\" (id_gatunek, id_ksiazka) VALUES ({int(id_genre)}, {int(book_id)})")
+    sql_object2 = sql.SQL(f"INSERT INTO \"Autor_Ksiazka\" (id_autor, id_ksiazka) VALUES ({int(id_author)}, {int(book_id)})")
+    sql_object3 = sql.SQL(f"INSERT INTO \"Wydawnictwo_Ksiazka\" (id_wydawnictwo, id_ksiazka) VALUES ({int(id_publisher)}, {int(book_id)})")
 
     try:
         cursor.execute(sql_object1)
         cursor.execute(sql_object2)
         cursor.execute(sql_object3)
         conn.commit()
-        cursor.close()
+        return True
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        return False
+    finally:
         cursor.close()
 
 def add_genre(conn, genre):
@@ -139,27 +151,31 @@ def add_genre(conn, genre):
         cursor.execute(sql_object)
         conn.commit()
         inserted_id = cursor.fetchone()[0]
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        inserted_id = -1
+        conn.rollback()
+        inserted_id = get_genre_id(conn, genre)
+    finally:
         cursor.close()
+
     return inserted_id
 
 def add_author(conn, author):
     cursor = conn.cursor()
-    author = author.split(' ')
-    sql_object = sql.SQL(f"INSERT INTO \"Autor\" (imie, nazwisko) VALUES (\'{author[0]}\', \'{author[1]}\') RETURNING id")
+    fname, lname = author.split(' ')
+    sql_object = sql.SQL(f"INSERT INTO \"Autor\" (imie, nazwisko) VALUES (\'{fname}\', \'{lname}\') RETURNING id")
 
     try:
         cursor.execute(sql_object)
         conn.commit()
         inserted_id = cursor.fetchone()[0]
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        inserted_id = -1
+        conn.rollback()
+        inserted_id = get_author_id(conn, author)
+    finally:
         cursor.close()
+
     return inserted_id
 
 def add_publisher(conn, publisher):
@@ -170,11 +186,13 @@ def add_publisher(conn, publisher):
         cursor.execute(sql_object)
         conn.commit()
         inserted_id = cursor.fetchone()[0]
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        inserted_id = -1
+        conn.rollback()
+        inserted_id = get_publisher_id(conn, publisher)
+    finally:
         cursor.close()
+
     return inserted_id
 
 def add_status(conn, status):
@@ -185,11 +203,13 @@ def add_status(conn, status):
         cursor.execute(sql_object)
         conn.commit()
         inserted_id = cursor.fetchone()[0]
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        inserted_id = -1
+        conn.rollback()
+        inserted_id = get_status_id(conn, status)
+    finally:
         cursor.close()
+
     return inserted_id
 
 def get_genre_id(conn, genre):
@@ -198,12 +218,14 @@ def get_genre_id(conn, genre):
 
     try:
         cursor.execute(sql_object)
-        id = int(cursor.fetchall()[0][0])
-        cursor.close()
+        id = cursor.fetchall()[0][0]
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        id = -1
+        conn.rollback()
+        id = 0
+    finally:
         cursor.close()
+
     return id
 
 def get_author_id(conn, author):
@@ -213,12 +235,14 @@ def get_author_id(conn, author):
 
     try:
         cursor.execute(sql_object)
-        id = int(cursor.fetchall()[0][0])
-        cursor.close()
+        id = cursor.fetchall()[0][0]
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        id = -1
+        conn.rollback()
+        id = 0
+    finally:
         cursor.close()
+
     return id
 
 def get_publisher_id(conn, publisher):
@@ -227,12 +251,30 @@ def get_publisher_id(conn, publisher):
 
     try:
         cursor.execute(sql_object)
-        id = int(cursor.fetchall()[0][0])
-        cursor.close()
+        id = cursor.fetchall()[0][0]
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        id = -1
+        conn.rollback()
+        id = 0
+    finally:
         cursor.close()
+
+    return id
+
+def get_status_id(conn, status):
+    cursor = conn.cursor()
+    sql_object = sql.SQL(f"SELECT id FROM \"Status\" WHERE nazwa=\'{status}\'")
+
+    try:
+        cursor.execute(sql_object)
+        id = cursor.fetchall()[0][0]
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        id = 0
+    finally:
+        cursor.close()
+
     return id
 
 def get_book_id(conn, title):
@@ -241,42 +283,50 @@ def get_book_id(conn, title):
 
     try:
         cursor.execute(sql_object)
-        id = int(cursor.fetchall()[0][0])
-        cursor.close()
+        id = cursor.fetchall()[0][0]
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        id = -1
+        conn.rollback()
+        id = 0
+    finally:
         cursor.close()
+
     return id
 
 def get_reviews(conn, book=None):
     cursor = conn.cursor()
+
     if not book:
         sql_object = sql.SQL("SELECT * FROM RecenzjaView")
     else:
         sql_object = sql.SQL(f"SELECT * FROM RecenzjaView WHERE \"Tytul\"=\'{book}\'")
+        
     try:
         cursor.execute(sql_object)
         table_data = cursor.fetchall()
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
         table_data = []
+    finally:
         cursor.close()
 
     return table_data
 
 def add_review(conn, review):
-    book_id = get_book_id(conn, review['tytul'])
-
     cursor = conn.cursor()
+    book_id = get_book_id(conn, review['tytul'])
     sql_object = sql.SQL(f"INSERT INTO \"Recenzja\" (id_ksiazka, ocena, opinia) VALUES ({int(book_id)}, {int(review['ocena'])}, \'{review['opinia']}\')")
+
     try:
         cursor.execute(sql_object)
         conn.commit()
-        cursor.close()
+        return True
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        return False
+    finally:    
         cursor.close()
 
 def get_available_books(conn):
@@ -286,15 +336,18 @@ def get_available_books(conn):
     try:
         cursor.execute(sql_object)
         table_data = cursor.fetchall()
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
         table_data = []
+    finally:
         cursor.close()
+
     return table_data
 
 def get_clients(conn, active_only=False):
     cursor = conn.cursor()
+
     if active_only:
         sql_object = sql.SQL('''
                                 SELECT \"Imie\", \"Nazwisko\", \"Pesel\", \"Email\", COUNT(\"ID Wypozyczenia\")
@@ -308,49 +361,77 @@ def get_clients(conn, active_only=False):
     try:
         cursor.execute(sql_object)
         table_data = cursor.fetchall()
-        cursor.close()
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
         table_data = []
+    finally:
         cursor.close()
+
     return table_data
 
 def add_client(conn, client):
     cursor = conn.cursor()
+
     sql_object = sql.SQL(f"INSERT INTO \"Klient\" (imie, nazwisko, pesel, email) VALUES (\'{client['imie']}\', \'{client['nazwisko']}\', \'{client['pesel']}\', \'{client['email']}\')")
+    
     try:
         cursor.execute(sql_object)
         conn.commit()
-        cursor.close()
+        return True
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        return False
+    finally:
         cursor.close()
 
 def add_reservation(conn, book, pesel, data_rezerwacji):
     cursor = conn.cursor()
+
     client_id = get_client_id(conn, pesel)
     sql_object = sql.SQL(f"INSERT INTO \"Rezerwacja\" (id_ksiazka, id_klient, data_rezerwacji) VALUES ({int(book[0])}, {client_id}, \'{data_rezerwacji}\')")
 
     try:
         cursor.execute(sql_object)
         conn.commit()
-        cursor.close()
+        return True
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+        return False
+    finally:
         cursor.close()
 
+def add_rent(conn, book, pesel, data_wypozyczenia, data_oddania):
+    cursor = conn.cursor()
+
+    client_id = get_client_id(conn, pesel)
+    sql_object = sql.SQL(f"INSERT INTO \"Wypozyczenie\" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES ({int(book[0])}, {client_id}, \'{data_wypozyczenia}\', \'{data_oddania}\')")
+
+    try:
+        cursor.execute(sql_object)
+        conn.commit()
+        return True
+    except Exception as e:
+        print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
+        conn.rollback()
+    finally:
+        cursor.close()
 
 def get_client_id(conn, pesel):
     cursor = conn.cursor()
+
     sql_object = sql.SQL(f"SELECT id FROM \"Klient\" WHERE pesel = \'{pesel}\';")
 
     try:
         cursor.execute(sql_object)
-        id = int(cursor.fetchall()[0][0])
-        cursor.close()
+        id = cursor.fetchall()[0][0]
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
-        id = -1
+        conn.rollback()
+        id = 0
+    finally:
         cursor.close()
     return id
 
