@@ -81,3 +81,16 @@ $$;
 
 CREATE TRIGGER after_update_reservation_status AFTER UPDATE ON "Rezerwacja"
 FOR EACH ROW EXECUTE PROCEDURE update_reservation();
+
+CREATE OR REPLACE FUNCTION update_rent()
+RETURNS TRIGGER
+LANGUAGE 'plpgsql' AS
+$$
+    BEGIN
+        UPDATE "Ksiazka" SET ilosc_egzemplarzy = ilosc_egzemplarzy + 1 WHERE id = NEW.id_ksiazka;
+        RETURN NEW;
+    END;
+$$;
+
+CREATE TRIGGER after_update_rent AFTER UPDATE ON "Wypozyczenie"
+FOR EACH ROW EXECUTE PROCEDURE update_rent();
