@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS "Gatunek_Ksiazka" CASCADE;
 
 CREATE TABLE "Ksiazka" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "tytul" varchar(40) NOT NULL,
+  "tytul" varchar(40) NOT NULL UNIQUE,
   "ilosc_egzemplarzy" int NOT NULL,
   "data_wydania" date NOT NULL
 );
@@ -30,7 +30,7 @@ CREATE TABLE "Wypozyczenie" (
 
 CREATE TABLE "Status" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "status" varchar(20) NOT NULL
+  "status" varchar(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE "Autor" (
@@ -56,8 +56,8 @@ CREATE TABLE "Klient" (
   "id" SERIAL PRIMARY KEY NOT NULL,
   "imie" varchar(20) NOT NULL,
   "nazwisko" varchar(20) NOT NULL,
-  "pesel" varchar(11) NOT NULL,
-  "email" varchar(40) NOT NULL
+  "pesel" varchar(11) NOT NULL UNIQUE,
+  "email" varchar(40) NOT NULL UNIQUE
 );
 
 CREATE TABLE "Recenzja" (
@@ -69,7 +69,7 @@ CREATE TABLE "Recenzja" (
 
 CREATE TABLE "Wydawnictwo" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "nazwa" varchar(40)
+  "nazwa" varchar(40) UNIQUE
 );
 
 CREATE TABLE "Wydawnictwo_Ksiazka" (
@@ -79,7 +79,7 @@ CREATE TABLE "Wydawnictwo_Ksiazka" (
 
 CREATE TABLE "Gatunek" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "nazwa" varchar(20) NOT NULL
+  "nazwa" varchar(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE "Gatunek_Ksiazka" (
@@ -100,12 +100,11 @@ ALTER TABLE "Wydawnictwo_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksi
 ALTER TABLE "Gatunek_Ksiazka" ADD FOREIGN KEY ("id_gatunek") REFERENCES "Gatunek" ("id");
 ALTER TABLE "Gatunek_Ksiazka" ADD FOREIGN KEY ("id_ksiazka") REFERENCES "Ksiazka" ("id");
 
-set datestyle to European;
-INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Opowieść o dwóch miastach', 5, '26-11-1859');
-INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Hobbit, czyli tam i z powrotem', 3, '21-09-1937');
-INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Harry Potter i Kamień Filozoficzny', 1, '26-06-1997');
-INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('I nie było już nikogo', 3, '03-02-1939');
-INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Morderstwo w Orient Expressie', 3, '01-01-1934');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Opowieść o dwóch miastach', 5, '1859-11-26');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Hobbit, czyli tam i z powrotem', 3, '1937-09-21');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Harry Potter i Kamień Filozoficzny', 1, '1997-06-26');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('I nie było już nikogo', 3, '1939-02-03');
+INSERT INTO "Ksiazka" (tytul, ilosc_egzemplarzy, data_wydania) VALUES ('Morderstwo w Orient Expressie', 3, '1934-01-01');
 
 INSERT INTO "Gatunek" (nazwa) VALUES ('Kryminał');
 INSERT INTO "Gatunek" (nazwa) VALUES ('Fantasy');
@@ -153,10 +152,10 @@ INSERT INTO "Klient" (imie, nazwisko, pesel, email) VALUES ('Jan', 'Nowak', '233
 INSERT INTO "Klient" (imie, nazwisko, pesel, email) VALUES ('Anna', 'Malinowska', '01379342148', 'malinowska.a@gmail.com');
 INSERT INTO "Klient" (imie, nazwisko, pesel, email) VALUES ('Piotr', 'Szpak', '10347426713', 'p.szpak@wp.pl');
 
-INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (1, 1, '27-01-2022', '31-01-2022');
-INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (3, 1, '29-01-2022', '06-02-2022');
-INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (4, 2, '20-01-2022', '30-01-2022');
+INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (1, 1, '2022-01-27', '2022-01-31');
+INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (3, 1, '2022-01-29', '2022-02-06');
+INSERT INTO "Wypozyczenie" (id_ksiazka, id_klient, data_wypozyczenia, data_oddania) VALUES (4, 2, '2022-01-20', '2022-01-30');
 
-INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (2, 4, '31-01-2022', 1);
-INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (3, 4, '03-02-2022', 1);
-INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (2, 3, '01-02-2022', 1);
+INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (2, 4, '2022-01-31', 1);
+INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (3, 4, '2022-02-03', 1);
+INSERT INTO "Rezerwacja" (id_ksiazka, id_klient, data_rezerwacji, id_status) VALUES (2, 3, '2022-02-01', 1);
