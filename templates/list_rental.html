@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block header %}
+    {{ header }}
+{% endblock %}
+
+{% block content %}
+
+{% if rentals %}
+        <table class="table table-bordered border-success" ><tr style="font-weight: bold; background-color:#ccffcc;">
+        <td>Id Wyp.</td><td>Id Kl.</td><td>Pesel</td><td>Id Ks.</td><td>Tytuł</td><td>Data Wyp.</td><td>Data Oddania</td><td>Aktualne</td></tr>
+        {% for rental in rentals %}
+            <tr><td>{{rental[0]}}</td><td>{{rental[1]}}</td><td>{{rental[2]}}</td><td>{{rental[3]}}</td><td>{{rental[4]}}</td><td>{{rental[5]}}</td><td>{{rental[6]}}</td><td>{{rental[7]}}</td></tr>
+        {% endfor %}
+        </table>
+        {% else %}
+            <div class="alert alert-dark" style="text-align: center;">
+                Brak Wypożyczeń do wyświetlenia
+            </div>
+{% endif %}
+
+{% endblock %}

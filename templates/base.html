@@ -15,11 +15,14 @@
 <body>
     <div>
         <div id="header">
-            <h2>System Zarządzania Bazą Danych Biblioteki</h2>
+            <h1>System Zarządzania Bazą Danych Biblioteki</h1>
         </div>
 
         <div style="height: 50px; ">
-
+            <h2 style="text-align: center">
+            {% block header %}
+            {% endblock %}
+            </h2>
         </div>
         
         </div>
@@ -34,6 +37,9 @@
         </div>
         <div style="height:40px;width:100%;margin:5px">
             <button class="btn rounded-btn" onclick="window.location.href='http://127.0.0.1:5000/listClients';">Lista Klientów</a>
+        </div>
+        <div style="height:40px;width:100%;margin:5px">
+            <button class="btn rounded-btn" onclick="window.location.href='http://127.0.0.1:5000/listRental';">Lista Wypożyczeń</a>
         </div>
         <div style="height:40px;width:100%;margin:5px">
             <button class="btn rounded-btn" onclick="window.location.href='http://127.0.0.1:5000/addBook';">Dodaj Książkę</a>

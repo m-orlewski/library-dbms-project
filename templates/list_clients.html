@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block header %}
+    {{ header }}
+{% endblock %}
 {% block content %}
     {% if active_clients %}
         <h2>Klienci z aktywnymi wypożyczeniami</h2>

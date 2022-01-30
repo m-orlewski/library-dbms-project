@@ -1,6 +1,6 @@
 from webbrowser import get
 from flask import Flask, render_template, request, flash, redirect, url_for
-from database import *
+from db import *
 import os
 from datetime import date
 
@@ -10,18 +10,21 @@ app.config['SECRET_KEY'] = os.urandom(24).hex()
 
 @app.route("/")
 def home():
-    return render_template('base.html')
+    header = "Strona Główna"
+    return render_template('base.html', header=header)
 
 @app.route("/listBooks", methods=['GET'])
 def list_books_get():
+    header = "Lista Książek"
     table_data = get_books(conn)
     genres = get_genres(conn)
     authors = get_authors(conn)
 
-    return render_template('books.html', data=table_data, genres=genres, authors=authors)
+    return render_template('list_books.html', data=table_data, genres=genres, authors=authors, header=header)
 
 @app.route("/listBooks", methods=['POST'])
 def list_books_post():
+    header = "Lista Książek"
     genres = get_genres(conn)
     authors = get_authors(conn)
 
@@ -35,15 +38,16 @@ def list_books_post():
 
     table_data = get_books(conn, choosen_genre, choosen_author)
 
-    return render_template('books.html', data=table_data, genres=genres, authors=authors)
+    return render_template('list_books.html', data=table_data, genres=genres, authors=authors, header=header)
 
 @app.route("/addBook", methods=['GET'])
 def add_book_get():
+    header = "Dodaj Książkę"
     genres = get_genres(conn)
     authors = get_authors(conn)
     publishers = get_publishers(conn)
 
-    return render_template('add_book.html', genres=genres, authors=authors, publishers=publishers)
+    return render_template('add_book.html', genres=genres, authors=authors, publishers=publishers, header=header)
 
 @app.route("/addBook", methods=['POST'])
 def add_book_post():
@@ -76,13 +80,15 @@ def add_book_post():
     
 @app.route("/listReviews", methods=['GET'])
 def list_reviews_get():
+    header = "Lista Recenzji"
     reviews = get_reviews(conn)
     books = get_books(conn)
 
-    return render_template('reviews.html', books=books, reviews=reviews)
+    return render_template('list_reviews.html', books=books, reviews=reviews, header=header)
 
 @app.route("/listReviews", methods=['POST'])
 def list_reviews_post():
+    header = "Lista Recenzji"
     book = request.form.get('select-book')
 
     if book != '0':
@@ -91,13 +97,14 @@ def list_reviews_post():
         reviews = get_reviews(conn)
     books = get_books(conn)
 
-    return render_template('reviews.html', books=books, reviews=reviews)
+    return render_template('list_reviews.html', books=books, reviews=reviews, header=header)
 
 @app.route("/addReview", methods=['GET'])
 def add_review_get():
+    header = "Dodaj Recenzji"
     books = get_books(conn)
 
-    return render_template('add_review.html', books=books)
+    return render_template('add_review.html', books=books, header=header)
 
 @app.route("/addReview", methods=['POST'])
 def add_review_post():
@@ -120,14 +127,16 @@ def add_review_post():
 
 @app.route("/listClients", methods=['GET'])
 def list_clients_get():
+    header = "Lista Klientów"
     active_clients = get_clients(conn, True)
     all_clients = get_clients(conn)
 
-    return render_template('clients.html', active_clients=active_clients, all_clients=all_clients)
+    return render_template('list_clients.html', active_clients=active_clients, all_clients=all_clients, header=header)
 
 @app.route("/addClient", methods=['GET'])
 def add_client_get():
-    return render_template('add_client.html')
+    header = "Dodaj Klienta"
+    return render_template('add_client.html', header=header)
 
 @app.route("/addClient", methods=['POST'])
 def add_client_post():
@@ -152,7 +161,8 @@ def add_client_post():
 
 @app.route("/addTables", methods=['GET'])
 def add_tables_get():
-    return render_template('add_tables.html')
+    header = "Dodaj Dane Do Pozostałych Tablic"
+    return render_template('add_tables.html', header=header)
 
 @app.route("/addTables", methods=['POST'])
 def add_tables_post():
@@ -193,9 +203,10 @@ def add_tables_post():
 
 @app.route("/addReservation", methods=['GET'])
 def add_reservation_get():
+    header = "Dodaj Rezerwację"
     books = get_available_books(conn)
 
-    return render_template('add_reservation.html', books=books)
+    return render_template('add_reservation.html', books=books, header=header)
 
 @app.route("/addReservation", methods=['POST'])
 def add_reservation_post():
@@ -216,8 +227,9 @@ def add_reservation_post():
 
 @app.route("/addRent", methods=['GET'])
 def add_rent_get():
+    header = "Dodaj Wypożyczenie"
     books = get_available_books(conn)
-    return render_template('add_rent.html', books=books)
+    return render_template('add_rent.html', books=books, header=header)
 
 @app.route("/addRent", methods=['POST'])
 def add_rent_post():
@@ -240,9 +252,10 @@ def add_rent_post():
 
 @app.route("/changeStatus", methods=['GET'])
 def change_status_get():
+    header = "Zmiana Statusu Rezerwacji"
     statuses = get_statuses(conn)
     reservations = get_reservations(conn)
-    return render_template('update_status.html', reservations=reservations, statuses=statuses)
+    return render_template('update_status.html', reservations=reservations, statuses=statuses, header=header)
 
 @app.route("/changeStatus", methods=['POST'])
 def change_status_post():
@@ -265,9 +278,18 @@ def change_status_post():
 
 @app.route("/returnBook", methods=['GET'])
 def return_book_get():
+    header = "Zwróć Książkę"
     rented_books = get_rented(conn)
 
-    return render_template('return_book.html', rented_books=rented_books)
+    return render_template('return_book.html', rented_books=rented_books, header=header)
+
+@app.route("/listRental", methods=['GET'])
+def list_rental_get():
+    header = "Lista Wypożyczeń"
+    rentals = get_detailed_rental(conn)
+
+    return render_template('list_rental.html', rentals=rentals, header=header)
+
 
 @app.route("/returnBook", methods=['POST'])
 def return_book_post():
