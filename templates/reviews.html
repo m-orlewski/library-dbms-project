@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    
     {% if books %}
     <form class="filter-form" method="POST">
             <select name="select-book" id="select-book" class="form-select">

@@ -95,21 +95,11 @@ def get_publishers(conn):
 
     return table_data
 
-def add_book(conn, book, new_genre, new_author, new_publisher):
-    if new_genre:
-        id_genre = add_genre(conn, book['gatunek'])
-    else:
-        id_genre = get_genre_id(conn, book['gatunek'])
+def add_book(conn, book):
 
-    if new_author:
-        id_author = add_author(conn, book['autor'])
-    else:
-        id_author = get_author_id(conn, book['autor'])
-
-    if new_publisher:
-        id_publisher = add_publisher(conn, book['wydawnictwo'])
-    else:
-        id_publisher = get_publisher_id(conn, book['wydawnictwo'])
+    id_genre = get_genre_id(conn, book['gatunek'])
+    id_author = get_author_id(conn, book['autor'])
+    id_publisher = get_publisher_id(conn, book['wydawnictwo'])
 
     cursor = conn.cursor()
     sql_object = sql.SQL(f"INSERT INTO \"Ksiazka\" (tytul, ilosc_egzemplarzy, data_wydania) VALUES (\'{book['tytul']}\', {int(book['ilosc_egzemplarzy'])}, \'{book['data_wydania']}\') RETURNING ID")
@@ -150,15 +140,13 @@ def add_genre(conn, genre):
     try:
         cursor.execute(sql_object)
         conn.commit()
-        inserted_id = cursor.fetchone()[0]
+        return True
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
         conn.rollback()
-        inserted_id = get_genre_id(conn, genre)
+        return False
     finally:
         cursor.close()
-
-    return inserted_id
 
 def add_author(conn, author):
     cursor = conn.cursor()
@@ -168,15 +156,13 @@ def add_author(conn, author):
     try:
         cursor.execute(sql_object)
         conn.commit()
-        inserted_id = cursor.fetchone()[0]
+        return True
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
         conn.rollback()
-        inserted_id = get_author_id(conn, author)
+        return False
     finally:
         cursor.close()
-
-    return inserted_id
 
 def add_publisher(conn, publisher):
     cursor = conn.cursor()
@@ -185,15 +171,13 @@ def add_publisher(conn, publisher):
     try:
         cursor.execute(sql_object)
         conn.commit()
-        inserted_id = cursor.fetchone()[0]
+        return True
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
         conn.rollback()
-        inserted_id = get_publisher_id(conn, publisher)
+        return False
     finally:
         cursor.close()
-
-    return inserted_id
 
 def add_status(conn, status):
     cursor = conn.cursor()
@@ -202,15 +186,13 @@ def add_status(conn, status):
     try:
         cursor.execute(sql_object)
         conn.commit()
-        inserted_id = cursor.fetchone()[0]
+        return True
     except Exception as e:
         print ("PostgreSQL psycopg2 cursor.execute() ERROR:", e)
         conn.rollback()
-        inserted_id = get_status_id(conn, status)
+        return False
     finally:
         cursor.close()
-
-    return inserted_id
 
 def get_genre_id(conn, genre):
     cursor = conn.cursor()

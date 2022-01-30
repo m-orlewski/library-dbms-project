@@ -42,32 +42,22 @@ def add_book_get():
     genres = get_genres(conn)
     authors = get_authors(conn)
     publishers = get_publishers(conn)
+
     return render_template('add_book.html', genres=genres, authors=authors, publishers=publishers)
 
 @app.route("/addBook", methods=['POST'])
 def add_book_post():
 
-    new_genre = False
-    new_author = False
-    new_publisher = False
-
     book = {}
     book['tytul'] = request.form.get('tytul')
     
     book['gatunek'] = request.form.get('select-genre')
-    if book['gatunek'] == '0':
-        book['gatunek'] = request.form.get('add-genre')
-        new_genre = True
-
     book['autor'] = request.form.get('select-author')
-    if book['autor'] == '0':
-        book['autor'] = request.form.get('add-author')
-        new_author = True
-
     book['wydawnictwo'] = request.form.get('select-publisher')
-    if book['wydawnictwo'] == '0':
-        book['wydawnictwo'] = request.form.get('add-publisher')
-        new_publisher = True
+
+    if book['gatunek'] == '0' and book['autor'] == '0' and book['wydawnictwo'] == '0':
+        flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
+        return redirect(url_for('add_book_get'))
 
     book['data_wydania'] = request.form.get('date')
     book['ilosc_egzemplarzy'] = request.form.get('count')
@@ -76,10 +66,13 @@ def add_book_post():
         if val == '':
             flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
             return redirect(url_for('add_book_get'))
-
-    add_book(conn, book, new_genre, new_author, new_publisher)
-
-    return redirect(url_for('list_books_get'))
+    
+    if not add_book(conn, book):
+        flash('Nie udało się dodać książki. Spróbuj ponownie.')
+        return redirect(url_for('add_book_get'))
+    else:
+        flash('Książka dodana do bazy.')
+        return redirect(url_for('list_books_get'))
     
 @app.route("/listReviews", methods=['GET'])
 def list_reviews_get():
@@ -90,7 +83,6 @@ def list_reviews_get():
 
 @app.route("/listReviews", methods=['POST'])
 def list_reviews_post():
-
     book = request.form.get('select-book')
 
     if book != '0':
@@ -104,6 +96,7 @@ def list_reviews_post():
 @app.route("/addReview", methods=['GET'])
 def add_review_get():
     books = get_books(conn)
+
     return render_template('add_review.html', books=books)
 
 @app.route("/addReview", methods=['POST'])
@@ -118,8 +111,12 @@ def add_review_post():
         flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
         return redirect(url_for('add_review_get'))
 
-    add_review(conn, review)
-    return redirect(url_for('list_reviews_get'))
+    if not add_review(conn, review):
+        flash('Nie udało się dodać recenzji. Spróbuj ponownie.')
+        return redirect(url_for('add_review_get'))
+    else:
+        flash('Recenzja dodana do bazy.')
+        return redirect(url_for('list_reviews_get'))
 
 @app.route("/listClients", methods=['GET'])
 def list_clients_get():
@@ -146,8 +143,12 @@ def add_client_post():
             flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
             return redirect(url_for('add_client_get'))
 
-    add_client(conn, client)
-    return redirect(url_for('list_clients_get'))
+    if not add_client(conn, client):
+        flash('Nie udało się dodać klienta. Spróbuj ponownie.')
+        return redirect(url_for('add_client_get'))
+    else:
+        flash('Klient dodany do bazy.')
+        return redirect(url_for('list_clients_get'))
 
 @app.route("/addTables", methods=['GET'])
 def add_tables_get():
@@ -162,22 +163,30 @@ def add_tables_post():
 
     msg = ''
     if genre != '':
-        msg += f'nowy gatunek({genre}), '
-        add_genre(conn, genre)
+        if add_genre(conn, genre):
+            msg += f'dodano nowy gatunek({genre}), '
+        else:
+            msg += f'nie udało się dodać nowego gatunku({genre}), '
     if author != '':
-        msg += f'nowy autor({author}), '
-        add_author(conn, author)
+        if add_author(conn, author):
+            msg += f'dodano nowego autora({author}), '
+        else:
+            msg += f'nie udało się dodać nowego autora({author}), '
     if publisher != '':
-        msg += f'nowe wydawnictwo({publisher}), '
-        add_publisher(conn, publisher)
+        if add_publisher(conn, publisher):
+            msg += f'dodano nowe wydawnictwo({publisher}), '
+        else:
+            msg += f'nie udało się dodać nowego wydawnictwa({publisher}), '
     if status != '':
-        msg += f'nowy status({status}), '
-        add_status(conn, status)
+        if add_status(conn, status):
+            msg += f'dodano nowy status({status}), '
+        else:
+            msg += f'nie udało się dodań nowego statusu({status}), '
 
     if msg == '':
         flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
     else:
-        msg = 'Dodano ' + msg
+        msg = 'Rezultat: ' + msg
         flash(msg[:-2])
 
     return redirect(url_for('add_tables_get'))
@@ -185,6 +194,7 @@ def add_tables_post():
 @app.route("/addReservation", methods=['GET'])
 def add_reservation_get():
     books = get_available_books(conn)
+
     return render_template('add_reservation.html', books=books)
 
 @app.route("/addReservation", methods=['POST'])
@@ -197,8 +207,12 @@ def add_reservation_post():
         flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
         return redirect(url_for('add_reservation_get'))
 
-    add_reservation(conn, book, pesel, data_rezerwacji)
-    return redirect(url_for('add_reservation_get'))
+    if not add_reservation(conn, book, pesel, data_rezerwacji):
+        flash('Nie udało się dodać rezerwacji. Spróbuj ponownie.')
+        return redirect(url_for('add_reservation_get'))
+    else:
+        flash('Rezerwacja dodana do bazy.')
+        return redirect(url_for('add_reservation_get'))
 
 @app.route("/addRent", methods=['GET'])
 def add_rent_get():
@@ -217,11 +231,10 @@ def add_rent_post():
         flash('Formularz wypełniony niepoprawnie. Spróbuj ponownie.')
         return redirect(url_for('add_rent_get'))
 
-    add_rent(conn, book, pesel, data_wypozyczenia, data_oddania)
+    if not add_rent(conn, book, pesel, data_wypozyczenia, data_oddania):
+        flash('Nie udało się dodać wypożyczenia. Spróbuj ponownie.')
+        return redirect(url_for('add_rent_get'))
     return redirect(url_for('add_rent_get'))
-
-    
-
 
 if __name__ == '__main__':
     app.run()
